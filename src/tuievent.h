@@ -35,7 +35,7 @@ enum TuiEventType
     evSORTMODECH,	// Switch view mode - 0-unsorted 1-state e.t.c.
     evADDACCMGR,	// Add account manager form
     evPROJECTOP,	// Project operations
-    evTASKINFO,		//генерируется когда нужно открыть окно детальной информации о задаче
+    evTASKINFO,		// Triggers when the task info panel becomes visible
     evTASKSELECTORON,	// Triggers when the task becomes visible
     evTASKSELECTOROFF,	// Triggers when the task selector becomes hidden
     evASCIIMODECHANGE,	// Triggers when ASCII line mode is changed
@@ -47,11 +47,12 @@ class TuiEvent : public NEvent // boinctui-specific programming events class
 {
   public:
     TuiEvent(TuiEventType type) : NEvent(evPROG, type)	{};
-    TuiEvent(TuiEventType type, Srv* srv, const char* prjname, bool userexist) : NEvent(evPROG, type) // Add project event
+    TuiEvent(TuiEventType type, Srv* srv, const char* prjname, bool userexist, bool byurl) : NEvent(evPROG, type) // Add project event
     {
 	this->srv = srv;
 	this->sdata1 = prjname;
 	this->bdata1 = userexist;
+    this->bdata2 = byurl;
     };
     TuiEvent(TuiEventType type, Srv* srv, const char* mgrname) : NEvent(evPROG, type) // Connect to account manager
     {
@@ -82,10 +83,11 @@ class TuiEvent : public NEvent // boinctui-specific programming events class
     };
     virtual ~TuiEvent() { /*kLogPrintf("~TuiEvent()\n");*/ };
     Srv*		srv;
-    std::string		sdata1; //произвольная строка
-    std::string		sdata2; //произвольная строка
-    bool		bdata1; //произаольная bool переменная
-    int			idata1; //произвольное целое
+    std::string		sdata1; // arbitrary string
+    std::string		sdata2; // arbitrary string
+    bool		bdata1; // arbitrary bool
+    bool		bdata2; // arbitrary bool
+    int			idata1; // arbitrary int
 };
 
 

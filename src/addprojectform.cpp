@@ -46,12 +46,13 @@ char* strlowcase(char* s) // To lower case
 }
 
 
-AddProjectForm::AddProjectForm(int rows, int cols,  Srv* srv, const char* projname, bool userexist) : NForm(rows,cols)
+AddProjectForm::AddProjectForm(int rows, int cols,  Srv* srv, const char* projname, bool userexist, bool byurl) : NForm(rows,cols)
 {
     this->srv = srv;
     settitle(projname);
     this->projname = projname;
     this->userexist = userexist;
+	this->byurl = byurl;
     Item* project = NULL;
     if (srv !=NULL)
 	project = srv->findprojectbynamefromall(projname);
@@ -197,6 +198,29 @@ void AddProjectForm::genfields(int& line, Item* project) // Create an array of f
 	    ERROREX();
 	line += h + 1;
     }
+
+    //project URL
+	if (byurl)
+	{
+		line++;
+		f = addfield(new_field(1, 10, line, 1 , 0, 0));
+		if (!f)
+			ERROREX();
+		if (E_OK != set_field_buffer(f, 0, "ProjectURL"))
+			ERROREX();
+		if (E_OK != set_field_back(f, getcolorpair(COLOR_WHITE,-1) | A_BOLD))
+			ERROREX();
+		if (E_OK != field_opts_off(f, O_ACTIVE)) //статический текст
+			ERROREX();
+		projurlfield = getfieldcount();
+		f = addfield(new_field(1, 40, line++, 15, 0, 0));
+		if (!f)
+			ERROREX();
+		if (E_OK != field_opts_off(f, O_AUTOSKIP))
+			ERROREX();
+		if (E_OK != set_field_back(f, getcolorpair(COLOR_WHITE,COLOR_CYAN) | A_BOLD))
+			ERROREX();
+	}
     // Email address
     line++;
     f = addfield(new_field(1, 10, line, 1 , 0, 0));
@@ -296,7 +320,7 @@ void AddProjectForm::eventhandle(NEvent* ev) // Event handler
 {
     if ( ev->done )
 	return;
-    NMouseEvent* mevent = (NMouseEvent*)ev;
+    //NMouseEvent* mevent = (NMouseEvent*)ev;
     if ( ev->type == NEvent::evMOUSE)
     {
 	NForm::eventhandle(ev); //предок
@@ -311,8 +335,10 @@ void AddProjectForm::eventhandle(NEvent* ev) // Event handler
 	    {
 		form_driver(frm, REQ_NEXT_FIELD); // Hack so that the current field doesn't lose value
 		char* email = strlowcase(rtrim(field_buffer(fields[emailfield],0)));
+		if (byurl)
+			projurl = rtrim(field_buffer(fields[projurlfield],0));
 		char* passw = rtrim(field_buffer(fields[passwfield],0));
-		kLogPrintf("AddProjectForm OK name=[%s] url=[%s] email=[%s]\n passw=[%s]\n", projname.c_str(), projurl.c_str(), email, passw);
+		kLogPrintf("AddProjectForm OK name=[%s] url=[%s] email=[%s] passw=[%s]\n", projname.c_str(), projurl.c_str(), email, passw);
 		if (srv!=NULL)
 		{
 		    std::string errmsg;

@@ -33,17 +33,17 @@ void callbackData(void *userdata, const char *content, int len); //коллбэ�
 char* stripinvalidtag(char* xml, int len) 	//ГРЯЗНЫЙ ХАК нужен чтобы до парсинга удалить кривые теги
 						//в сообщениях вида <a href=.. </a> иначе будет ошибка парсинга
 {
-    const char* teg1 = "<body>";
-    const char* teg2 = "</body>";
-    int bytesdone = 0; // Bytes viewed
+    const char* tag1 = "<body>";
+    const char* tag2 = "</body>";
+    //int bytesdone = 0; // Bytes viewed
     char* pos = (char*)xml;
     while (pos < xml + len)
     {
-	char* x1 = strstr(pos, teg1);
-        char* x2 = strstr(pos, teg2);
+	char* x1 = strstr(pos, tag1);
+        char* x2 = strstr(pos, tag2);
         if ((x1 != NULL)&&(x2 != NULL))
 	{
-	    for(char* p = x1 + strlen(teg1); p < x2; p++)
+	    for(char* p = x1 + strlen(tag1); p < x2; p++)
 	    {
 		if ((*p == '<')||(*p == '>')) // Remove HTML tags
 		    *p = ' ';
@@ -123,7 +123,7 @@ void callbackData(void *userdata, const char *content, int len)
     //kLogPrintf("\ncallbackData()-->[%s]<-- len=%d\n",tmp,len);
     //заносим значение в текущий эл-т
     bool empty = true;
-    for (int i = 0; i < strlen(tmp); i++)
+    for (uint i = 0; i < strlen(tmp); i++)
     {
 	if (tmp[i] != ' ')
 	{

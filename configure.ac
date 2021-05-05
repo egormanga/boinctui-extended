@@ -99,7 +99,7 @@ AC_ARG_WITH(
 		AC_DEFINE(NCURSESW_HAVE_SUBDIR,1)
 	    ],
 	    #cursesw headers are in default include dir?
-	    AC_CHECK_HEADERS( \ 
+	    AC_CHECK_HEADERS( \
 		[ curses.h form.h panel.h menu.h] ,
 		[],
 		[
